@@ -6,4 +6,4 @@ def fact():
     for i in range(1, n + 1):
         f *= i
         
-    print("Factorial is", f)
+    print("Factorial:", f)

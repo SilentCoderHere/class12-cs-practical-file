@@ -3,4 +3,4 @@
 def calc():
     expr = input("Enter expression: ")
     result = eval(expr)
-    print("Result: ", result)
+    print("Result:", result)
