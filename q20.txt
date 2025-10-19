@@ -1,0 +1,4 @@
+1. SELECT * FROM BLOCKCHAIN WHERE User like "k%";
+2. SELECT Transaction_dat FROM BLOCKCHAIN WHERE Hash = "@345r";
+3. SELECT * FROM BLOCKCHAIN WHERE YEAR(Transaction_date) = 2022;
+4. SELECT COUNT(*) AS total_transactions FROM BLOCKCHAIN;
