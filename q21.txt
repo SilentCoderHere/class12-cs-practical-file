@@ -1,0 +1,5 @@
+1. SELECT * FROM movie;
+2. SELECT DISTINCT Category FROM movie;
+3. SELECT * FROM movie WHERE Releasedate IS NULL;
+4. SELECT * FROM movie WHERE Category IN ('Comedy','Action');
+5. SELECT Movieid, Moviename, (Businesscost - Productioncost) AS NetProfit FROM movie WHERE Businesscost IS NOT NULL AND Productioncost IS NOT NULL;
