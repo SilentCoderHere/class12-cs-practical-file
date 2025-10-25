@@ -21,3 +21,6 @@ def swap_with_third():
     
     print("a:", a)
     print("b:", b)
+    
+swap_without_third()
+swap_with_third()

@@ -8,3 +8,5 @@ def prime():
             break
     else:
         print(n, "is prime")
+        
+prime()

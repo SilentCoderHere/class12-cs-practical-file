@@ -16,3 +16,18 @@ def pop():
         stack.pop()
     else:
         print("Stack underflow")
+        
+while True:
+    print("1. Push")
+    print("2. Pop")
+    print("3. Exit")
+    
+    choice = input("Enter: ")
+    if choice == "1":
+        push()
+    elif choice == "2":
+        pop()
+    elif choice == "3":
+        break
+    else:
+        print("Invalid")

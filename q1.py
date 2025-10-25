@@ -7,3 +7,5 @@ def fact():
         f *= i
         
     print("Factorial:", f)
+    
+fact()
