@@ -1,0 +1,7 @@
+1. SELECT * FROM Railway WHERE Source = 'Dehradun';
+
+2. SELECT * FROM Railway WHERE Destination = 'Patna';
+
+3. SELECT * FROM Railway WHERE DistanceCovered > 1000;
+
+4. SELECT TrainNo, TrainName, RunningDays FROM Railway WHERE TrainName = 'Vande Bharat';

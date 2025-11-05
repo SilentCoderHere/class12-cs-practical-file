@@ -1,0 +1,9 @@
+1. SELECT * FROM UNIFORM, COST WHERE UNIFORM.UCode = COST.UCode AND UPrice > 800 AND Manufacturer = 'Jindal';
+
+2. SELECT * FROM UNIFORM, COST;
+
+3. ALTER TABLE COST ADD Discount DECIMAL(5,2);
+
+4. SELECT Manufacturer, COUNT(*) AS TotalUniforms FROM UNIFORM GROUP BY Manufacturer;
+
+5. SELECT * FROM UNIFORM WHERE UCode IN ('001', '002', '005', '006');
