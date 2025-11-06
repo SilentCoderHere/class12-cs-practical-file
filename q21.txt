@@ -6,4 +6,4 @@
 
 4. SELECT * FROM movie WHERE Category IN ('Comedy','Action');
 
-5. SELECT Movieid, Moviename, (Businesscost - Productioncost) AS NetProfit FROM movie WHERE Businesscost IS NOT NULL AND Productioncost IS NOT NULL;
+5. SELECT Movieid, Moviename, (Businesscost - Productioncost) AS NetProfit FROM movie;
