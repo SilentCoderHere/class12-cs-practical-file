@@ -1,7 +1,7 @@
-1. CREATE TABLE Product (PCode INT PRIMARY KEY, PName VARCHAR(30) NOT NULL, UPrice DECIMAL(10,2), Manufacturer VARCHAR(30));
+1. CREATE TABLE Product (PCode INT, PName VARCHAR(30) NOT NULL, UPrice DECIMAL(10,2), Manufacturer VARCHAR(30));
 
 2. ALTER TABLE Product ADD Discount DECIMAL(5,2);
 
 3. UPDATE Product SET UPrice = UPrice * 1.12 WHERE Manufacturer = 'Dove';
 
-4. SELECT Manufacturer, COUNT(*) AS TotalProducts FROM Product GROUP BY Manufacturer;
+4. SELECT Manufacturer, COUNT(PName) AS TotalProducts FROM Product GROUP BY Manufacturer;
