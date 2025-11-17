@@ -2,9 +2,12 @@
 
 file = open("binary.dat", "wb")
 data = file.write(b"Hello")
+print("Binary data saved")
+
 file.close()
 
 file = open("binary.dat", "rb")
 data = file.read()
-print(data)
+print("Data read:", data)
+
 file.close()
