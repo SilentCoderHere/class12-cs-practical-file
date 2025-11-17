@@ -1,6 +1,6 @@
 # Write a python program to reverse a string using stack.
 
-s = "Hello World"
+s = input("Enter string: ")
 stack = []
 for char in s:
     stack.append(char)
