@@ -1,10 +1,8 @@
 # Write a python program to perform read and write operation in a text file.
 
-file = open("text.txt", "w")
-data = file.write("Hello")
-file.close()
-
-file = open("text.txt", "r")
+file = open("text.txt", "w+")
+file.write("Hello")
+print("Data saved")
 data = file.read()
-print(data)
+print("Data read:", data)
 file.close()
