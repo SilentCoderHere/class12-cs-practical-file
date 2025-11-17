@@ -5,20 +5,20 @@ import pickle
 students = [
     {"rollno": 1, "name": "Abc", "class": 12},
     {"rollno": 2, "name": "Pqr", "class": 12},
-    {"rollno": 3, "name": "Xyz", "class": 12}
+    {"rollno": 3, "name": "Xyz", "class": 12},
 ]
 
 file = open("students.dat", "wb")
 pickle.dump(students, file)
 file.close()
 
-key = 2
+rollno = int(input("Enter roll number: "))
 file = open("students.dat", "rb")
 data = pickle.load(file)
 file.close()
 
 for student in data:
-    if student["rollno"] == key:
+    if student["rollno"] == rollno:
         print("Record found:", student)
         break
 else:
