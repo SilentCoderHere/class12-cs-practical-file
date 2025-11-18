@@ -25,6 +25,6 @@ def read_csv(filename):
     file.close()
 
 
-create_csv("data.csv", [["Name", "Age"], ["Alice", 20], ["Bob", 30]])
-write_csv("data.csv", ["Charlie", 40])
+create_csv("data.csv", [["Name", "Age"], ["Prem", 20], ["Jay", 30]])
+write_csv("data.csv", ["Sarthak", 40])
 read_csv("data.csv")
