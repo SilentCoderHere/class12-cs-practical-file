@@ -194,6 +194,10 @@ def book_ticket(con, cur):
         return
 
     coaches = find_coach(cur, train_id)
+    if not coaches:
+        print("Message: No coaches found in this train")
+        return
+
     all_coaches = []
 
     for coach in coaches:
@@ -357,7 +361,7 @@ def search_train(cur):
 
 
 def add_train(con, cur):
-    for seat_number in range(get_number("How many trains you want to add? ")):
+    for _ in range(get_number("How many trains you want to add? ")):
         train_id = get_number("Enter train number (integer): ")
         train_name = input("Enter train name: ")
         source = input("Enter source: ")
@@ -368,21 +372,50 @@ def add_train(con, cur):
             (train_id, train_name, source, destination),
         )
 
-        for seat_number in range(get_number("How many coaches you want to add? ")):
-            coach_type = input("Enter coach type: ")
-            fare = get_number("Enter fare (float): ", float)
-            total_seats = get_number("Enter total seats (integer): ")
-            cur.execute(
-                "INSERT INTO coach (train_id, coach_type, fare, total_seats) VALUES (?, ?, ?, ?)",
-                (train_id, coach_type, fare, total_seats),
-            )
-            coach_id = cur.lastrowid
+    con.commit()
 
-            for current_seat_number in range(1, total_seats + 1):
-                cur.execute(
-                    "INSERT INTO seats (coach_id, seat_number) VALUES (?, ?)",
-                    (coach_id, current_seat_number),
-                )
+
+def add_coach(con, cur):
+    train_id = get_number("Enter train number (integer): ")
+    numbers_of_coaches = get_number("How many coaches you want to add? ")
+
+    for _ in range(numbers_of_coaches):
+        coach_type = input("Enter coach type: ")
+        fare = get_number("Enter fare (float): ", float)
+        total_seats = get_number("Enter total seats (integer): ")
+        cur.execute(
+            "INSERT INTO coach (train_id, coach_type, fare, total_seats) VALUES (?, ?, ?, ?)",
+            (train_id, coach_type, fare, total_seats),
+        )
+        coach_id = cur.lastrowid
+
+        for seat_number in range(1, total_seats + 1):
+            cur.execute(
+                "INSERT INTO seats (coach_id, seat_number) VALUES (?, ?)",
+                (coach_id, seat_number),
+            )
+
+    con.commit()
+
+
+def remove_train(con, cur):
+    train_id = get_number("Enter train number (integer): ")
+    if not find_train(cur, train_id):
+        print("Message: Train not found")
+        return
+
+    cur.execute("SELECT * FROM bookings WHERE train_id = ?", (train_id,))
+    if cur.fetchall():
+        print("Message: Train has active bookings")
+        return
+
+    cur.execute("DELETE FROM bookings WHERE train_id = ?", (train_id,))
+    cur.execute(
+        "DELETE FROM seats WHERE coach_id IN (SELECT coach_id FROM coach WHERE train_id = ?)",
+        (train_id,),
+    )
+    cur.execute("DELETE FROM coach WHERE train_id = ?", (train_id,))
+    cur.execute("DELETE FROM train WHERE train_id = ?", (train_id,))
 
     con.commit()
 
@@ -395,18 +428,22 @@ def admin(con, cur):
 
     print("You're logged in to admin panel")
     while True:
-        print("1. Train munipulation")
-        print("2. Check Tickets")
-        print("3. Logout")
+        print("1. Add train")
+        print("2. Add coach")
+        print("3. Remove train")
+        print("4. Logout")
+        print()
 
         choice = input("Enter choice (integer): ")
         if choice == "1":
-            pass
+            add_train(con, cur)
         elif choice == "2":
-            pass
+            add_coach(con, cur)
         elif choice == "3":
-            print("Message: Logged out successfully")
-            return
+            remove_train(con, cur)
+        elif choice == "4":
+            print("Logged out")
+            break
         else:
             print("Message: Invalid choice")
 
