@@ -63,14 +63,14 @@ def create_database(con, cur):
     con.commit()
 
 
-def get_integer(prompt):
+def get_number(prompt, convert=int):
     while True:
         try:
-            integer = int(input(prompt))
-            if integer < 1:
+            value = convert(input(prompt))
+            if value < 1:
                 print("Error: Only positive number")
                 continue
-            return integer
+            return value
         except ValueError:
             print("Error: Invalid input")
 
@@ -89,7 +89,7 @@ def menu():
     print("3. Cancel ticket")
     print("4. Search ticket")
     print("5. Search train")
-    print("6. Add train (testing purposes)")
+    print("6. Admin panel (testing purposes)")
     print("7. Exit")
     print()
 
@@ -156,7 +156,7 @@ def get_booking_details(cur, booking_id):
     return passenger, seat_number, seat_id
 
 
-def list_trains(con, cur):
+def list_trains(cur):
     cur.execute("SELECT * FROM train")
     trains = cur.fetchall()
     if not trains:
@@ -186,8 +186,8 @@ def list_trains(con, cur):
 
 
 def book_ticket(con, cur):
-    number_of_tickets = get_integer("How many ticket(s) you want to book? ")
-    train_id = get_integer("Enter train number (integer): ")
+    number_of_tickets = get_number("How many ticket(s) you want to book? ")
+    train_id = get_number("Enter train number (integer): ")
     train = find_train(cur, train_id)
     if not train:
         print("Message: Train not found")
@@ -215,7 +215,7 @@ def book_ticket(con, cur):
 
     for _ in range(number_of_tickets):
         name = input("Enter name: ")
-        age = get_integer("Enter age (integer): ")
+        age = get_number("Enter age (integer): ")
         gender = get_gender("Enter gender (M/F/O): ")
 
         seat = find_seat(cur, coach_id)
@@ -249,7 +249,7 @@ def book_ticket(con, cur):
 
 
 def cancel_booking(con, cur):
-    pnr_id = get_integer("Enter pnr (integer): ")
+    pnr_id = get_number("Enter pnr (integer): ")
     cur.execute(
         "SELECT booking_id, passenger_id, train_id, coach_id FROM bookings WHERE pnr_id = ?",
         (pnr_id,),
@@ -300,8 +300,8 @@ def cancel_booking(con, cur):
     con.commit()
 
 
-def search_ticket(con, cur):
-    pnr_id = get_integer("Enter pnr (integer): ")
+def search_ticket(cur):
+    pnr_id = get_number("Enter pnr (integer): ")
     cur.execute(
         "SELECT booking_id, passenger_id, train_id, coach_id FROM bookings WHERE pnr_id = ?",
         (pnr_id,),
@@ -335,10 +335,8 @@ def search_ticket(con, cur):
         print("Gender:", passenger[3])
         print()
 
-    con.commit()
 
-
-def search_train(con, cur):
+def search_train(cur):
     source = input("Enter source (case insensitive): ").lower()
     destination = input("Enter destination (case insensitive): ").lower()
     cur.execute(
@@ -357,12 +355,10 @@ def search_train(con, cur):
 
     print("—————————————————————————————————————————————————————————————")
 
-    con.commit()
-
 
 def add_train(con, cur):
-    for seat_number in range(get_integer("How many trains you want to add? ")):
-        train_id = get_integer("Enter train number (integer): ")
+    for seat_number in range(get_number("How many trains you want to add? ")):
+        train_id = get_number("Enter train number (integer): ")
         train_name = input("Enter train name: ")
         source = input("Enter source: ")
         destination = input("Enter destination: ")
@@ -372,10 +368,10 @@ def add_train(con, cur):
             (train_id, train_name, source, destination),
         )
 
-        for seat_number in range(get_integer("How many coaches you want to add? ")):
+        for seat_number in range(get_number("How many coaches you want to add? ")):
             coach_type = input("Enter coach type: ")
-            fare = get_integer("Enter fare (integer): ")
-            total_seats = get_integer("Enter total seats (integer): ")
+            fare = get_number("Enter fare (float): ", float)
+            total_seats = get_number("Enter total seats (integer): ")
             cur.execute(
                 "INSERT INTO coach (train_id, coach_type, fare, total_seats) VALUES (?, ?, ?, ?)",
                 (train_id, coach_type, fare, total_seats),
@@ -391,6 +387,30 @@ def add_train(con, cur):
     con.commit()
 
 
+def admin(con, cur):
+    password = input("Enter the password: ")
+    if password != "pass1234":
+        print("Message: Access denied")
+        return
+
+    print("You're logged in to admin panel")
+    while True:
+        print("1. Train munipulation")
+        print("2. Check Tickets")
+        print("3. Logout")
+
+        choice = input("Enter choice (integer): ")
+        if choice == "1":
+            pass
+        elif choice == "2":
+            pass
+        elif choice == "3":
+            print("Message: Logged out successfully")
+            return
+        else:
+            print("Message: Invalid choice")
+
+
 def main(con, cur):
     print("———————————————————————————————————————")
     print("| WELCOME TO TRAIN RESERVATION SYSTEM |")
@@ -401,17 +421,17 @@ def main(con, cur):
         menu()
         choice = input("Enter choice (integer): ")
         if choice == "1":
-            list_trains(con, cur)
+            list_trains(cur)
         elif choice == "2":
             book_ticket(con, cur)
         elif choice == "3":
             cancel_booking(con, cur)
         elif choice == "4":
-            search_ticket(con, cur)
+            search_ticket(cur)
         elif choice == "5":
-            search_train(con, cur)
+            search_train(cur)
         elif choice == "6":
-            add_train(con, cur)
+            admin(con, cur)
         elif choice == "7":
             print("Bye")
             break
