@@ -363,6 +363,9 @@ def search_train(cur):
 def add_train(con, cur):
     for _ in range(get_number("How many trains you want to add? ")):
         train_id = get_number("Enter train number (integer): ")
+        if find_train(cur, train_id): 
+            print("Message: Train already exists")
+            return
         train_name = input("Enter train name: ")
         source = input("Enter source: ")
         destination = input("Enter destination: ")
@@ -371,12 +374,13 @@ def add_train(con, cur):
             "INSERT INTO train (train_id, name, source, destination) VALUES (?, ?, ?, ?)",
             (train_id, train_name, source, destination),
         )
+        
+    add_coach(con, cur, train_id)
 
     con.commit()
 
 
-def add_coach(con, cur):
-    train_id = get_number("Enter train number (integer): ")
+def add_coach(con, cur, train_id):
     numbers_of_coaches = get_number("How many coaches you want to add? ")
 
     for _ in range(numbers_of_coaches):
@@ -429,19 +433,16 @@ def admin(con, cur):
     print("You're logged in to admin panel")
     while True:
         print("1. Add train")
-        print("2. Add coach")
-        print("3. Remove train")
-        print("4. Logout")
+        print("2. Remove train")
+        print("3. Logout")
         print()
 
         choice = input("Enter choice (integer): ")
         if choice == "1":
             add_train(con, cur)
         elif choice == "2":
-            add_coach(con, cur)
-        elif choice == "3":
             remove_train(con, cur)
-        elif choice == "4":
+        elif choice == "3":
             print("Logged out")
             break
         else:
