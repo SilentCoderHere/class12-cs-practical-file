@@ -59,32 +59,55 @@ def create_database(con, cur):
             FOREIGN KEY(passenger_id) REFERENCES passenger(passenger_id)
         )"""
     )
-    
+
     cur.execute("SELECT * FROM train LIMIT 1")
     train = cur.fetchone()
-    
+
     if not train:
         print("Message: No train found; adding trains")
-        cur.execute("INSERT INTO train (name, source, destination) VALUES (?, ?, ?)", ('Express Train 1', 'Delhi', 'Mumbai'))
-        cur.execute("INSERT INTO train (name, source, destination) VALUES (?, ?, ?)", ('Express Train 2', 'Kolkata', 'Chennai'))
-        cur.execute("INSERT INTO train (name, source, destination) VALUES (?, ?, ?)", ('Express Train 3', 'Bangalore', 'Hyderabad'))
-        
+        cur.execute(
+            "INSERT INTO train (name, source, destination) VALUES (?, ?, ?)",
+            ("Express Train 1", "Delhi", "Mumbai"),
+        )
+        cur.execute(
+            "INSERT INTO train (name, source, destination) VALUES (?, ?, ?)",
+            ("Express Train 2", "Kolkata", "Chennai"),
+        )
+        cur.execute(
+            "INSERT INTO train (name, source, destination) VALUES (?, ?, ?)",
+            ("Express Train 3", "Bangalore", "Hyderabad"),
+        )
+
         train_ids = [1, 2, 3]
-        
+
         for train_id in train_ids:
-            cur.execute("INSERT INTO coach (train_id, coach_type, total_seats, fare) VALUES (?, ?, ?, ?)", 
-                        (train_id, 'Sleeper', 50, 800))
-            cur.execute("INSERT INTO coach (train_id, coach_type, total_seats, fare) VALUES (?, ?, ?, ?)", 
-                        (train_id, 'AC', 30, 1500))
-        
+            cur.execute(
+                "INSERT INTO coach (train_id, coach_type, total_seats, fare) VALUES (?, ?, ?, ?)",
+                (train_id, "Sleeper", 50, 800),
+            )
+            cur.execute(
+                "INSERT INTO coach (train_id, coach_type, total_seats, fare) VALUES (?, ?, ?, ?)",
+                (train_id, "AC", 30, 1500),
+            )
+
         cur.execute("SELECT coach_id FROM coach")
         coach_ids = [row[0] for row in cur.fetchall()]
-        
+
         for coach_id in coach_ids:
-            total_seats = 50 if 'Sleeper' in cur.execute("SELECT coach_type FROM coach WHERE coach_id = ?", (coach_id,)).fetchone() else 30
+            total_seats = (
+                50
+                if "Sleeper"
+                in cur.execute(
+                    "SELECT coach_type FROM coach WHERE coach_id = ?", (coach_id,)
+                ).fetchone()
+                else 30
+            )
             for seat_number in range(1, total_seats + 1):
-                cur.execute("INSERT INTO seats (coach_id, seat_number) VALUES (?, ?)", (coach_id, seat_number))
-        
+                cur.execute(
+                    "INSERT INTO seats (coach_id, seat_number) VALUES (?, ?)",
+                    (coach_id, seat_number),
+                )
+
     con.commit()
 
 
@@ -364,27 +387,25 @@ def search_ticket(cur):
         print("Age:", passenger[2])
         print("Gender:", passenger[3])
         print()
-        
+
+
 def my_bookings(cur):
     cur.execute("SELECT * FROM bookings")
     bookings = cur.fetchall()
     if not bookings:
         print("Message: No booking")
         return
-    
+
     for booking in bookings:
-        booking_id = booking[0]
         pnr_id = booking[1]
-        passenger_id = booking[2]
         train_id = booking[3]
         coach_id = booking[4]
-        seat_id = booking[5]
         booking_datetime = booking[6]
-        
+
         train = find_train(cur, train_id)
         cur.execute("SELECT coach_type FROM coach WHERE coach_id = ?", (coach_id,))
         coach = cur.fetchone()
-        
+
         print("PRN:", pnr_id)
         print("Booking time:", booking_datetime)
         print("Train name:", train[1])
@@ -392,9 +413,9 @@ def my_bookings(cur):
         print("Destination:", train[3])
         print("Coach:", coach[0])
         print()
-        
+
     print()
-        
+
 
 def search_train(cur):
     source = input("Enter source (case insensitive): ").lower()
@@ -419,7 +440,7 @@ def search_train(cur):
 def add_train(con, cur):
     for _ in range(get_number("How many trains you want to add? ")):
         train_id = get_number("Enter train number (integer): ")
-        if find_train(cur, train_id): 
+        if find_train(cur, train_id):
             print("Message: Train already exists")
             return
         train_name = input("Enter train name: ")
@@ -430,7 +451,7 @@ def add_train(con, cur):
             "INSERT INTO train (train_id, name, source, destination) VALUES (?, ?, ?, ?)",
             (train_id, train_name, source, destination),
         )
-        
+
     add_coach(con, cur, train_id)
 
     con.commit()
