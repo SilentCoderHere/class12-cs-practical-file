@@ -380,7 +380,7 @@ def search_ticket(cur):
 
     for booking in bookings:
         booking_id = booking[0]
-        passenger, seat_number, seat_id = get_booking_details(cur, booking_id)
+        passenger, seat_number, _ = get_booking_details(cur, booking_id)
 
         print("Seat number:", seat_number)
         print("Name:", passenger[1])
@@ -452,12 +452,13 @@ def add_train(con, cur):
             (train_id, train_name, source, destination),
         )
 
-    add_coach(con, cur, train_id)
+    add_coach(cur, train_id)
+    print("Message: Train added successfully")
 
     con.commit()
 
 
-def add_coach(con, cur, train_id):
+def add_coach(cur, train_id):
     numbers_of_coaches = get_number("How many coaches you want to add? ")
 
     for _ in range(numbers_of_coaches):
@@ -468,15 +469,17 @@ def add_coach(con, cur, train_id):
             "INSERT INTO coach (train_id, coach_type, fare, total_seats) VALUES (?, ?, ?, ?)",
             (train_id, coach_type, fare, total_seats),
         )
+
         coach_id = cur.lastrowid
+        add_seat(cur, coach_id, total_seats)
 
-        for seat_number in range(1, total_seats + 1):
-            cur.execute(
-                "INSERT INTO seats (coach_id, seat_number) VALUES (?, ?)",
-                (coach_id, seat_number),
-            )
 
-    con.commit()
+def add_seat(cur, coach_id, total_seats):
+    for seat_number in range(1, total_seats + 1):
+        cur.execute(
+            "INSERT INTO seats (coach_id, seat_number) VALUES (?, ?)",
+            (coach_id, seat_number),
+        )
 
 
 def remove_train(con, cur):
@@ -497,6 +500,8 @@ def remove_train(con, cur):
     )
     cur.execute("DELETE FROM coach WHERE train_id = ?", (train_id,))
     cur.execute("DELETE FROM train WHERE train_id = ?", (train_id,))
+
+    print("Message: Train removed successfully")
 
     con.commit()
 
